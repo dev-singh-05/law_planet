@@ -5,11 +5,11 @@
 
 import { supabase } from './supabaseClient.js';
 
-// Check if user is already logged in and redirect to dashboard
+// Check if user is already logged in and redirect to home
 async function checkAuth() {
   const { data: { user } } = await supabase.auth.getUser();
   if (user) {
-    window.location.href = 'dashboard.html';
+    window.location.href = 'home.html';
   }
 }
 
@@ -38,8 +38,8 @@ if (loginForm) {
 
       if (error) throw error;
 
-      // Redirect to dashboard
-      window.location.href = 'dashboard.html';
+      // Redirect to home
+      window.location.href = 'home.html';
     } catch (error) {
       errorDiv.textContent = error.message || 'Failed to login. Please check your credentials.';
     }
@@ -126,8 +126,8 @@ if (signupForm) {
         if (lawyerError) throw lawyerError;
       }
 
-      // Redirect to dashboard
-      window.location.href = 'dashboard.html';
+      // Redirect to home
+      window.location.href = 'home.html';
 
     } catch (error) {
       console.error('Signup error:', error);
