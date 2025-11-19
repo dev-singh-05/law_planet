@@ -122,20 +122,26 @@ function populateProfileForm() {
 function setupClientDashboard() {
   const sidebar = document.querySelector('.sidebar-nav');
   sidebar.innerHTML = `
-    <button data-section="profileSection" class="active" onclick="switchToSection('profileSection')">My Profile</button>
+    <button data-section="homeSection" class="active" onclick="switchToSection('homeSection')">Dashboard</button>
+    <button data-section="profileSection" onclick="switchToSection('profileSection')">My Profile</button>
     <button data-section="findLawyersSection" onclick="switchToSection('findLawyersSection')">Find Lawyers</button>
     <button data-section="myChatsSection" onclick="switchToSection('myChatsSection')">My Chats</button>
   `;
 
   // Show client sections
+  document.getElementById('homeSection').style.display = 'block';
+  document.getElementById('homeSection').classList.add('active');
   document.getElementById('profileSection').style.display = 'block';
-  document.getElementById('profileSection').classList.add('active');
   document.getElementById('findLawyersSection').style.display = 'block';
   document.getElementById('myChatsSection').style.display = 'block';
 
   // Setup event listeners
   setupProfileForm();
   loadClientChats();
+  loadClientStats();
+  loadNews();
+  loadQuickActions('client');
+  updateProfilePreview();
 
   // Load lawyers initially
   searchLawyers();
@@ -147,15 +153,17 @@ function setupClientDashboard() {
 function setupLawyerDashboard() {
   const sidebar = document.querySelector('.sidebar-nav');
   sidebar.innerHTML = `
-    <button data-section="profileSection" class="active" onclick="switchToSection('profileSection')">My Profile</button>
+    <button data-section="homeSection" class="active" onclick="switchToSection('homeSection')">Dashboard</button>
+    <button data-section="profileSection" onclick="switchToSection('profileSection')">My Profile</button>
     <button data-section="lawyerProfileSection" onclick="switchToSection('lawyerProfileSection')">Lawyer Profile</button>
     <button data-section="myCasesSection" onclick="switchToSection('myCasesSection')">My Cases</button>
     <button data-section="clientChatsSection" onclick="switchToSection('clientChatsSection')">Client Chats</button>
   `;
 
   // Show lawyer sections
+  document.getElementById('homeSection').style.display = 'block';
+  document.getElementById('homeSection').classList.add('active');
   document.getElementById('profileSection').style.display = 'block';
-  document.getElementById('profileSection').classList.add('active');
   document.getElementById('lawyerProfileSection').style.display = 'block';
   document.getElementById('myCasesSection').style.display = 'block';
   document.getElementById('clientChatsSection').style.display = 'block';
@@ -165,6 +173,10 @@ function setupLawyerDashboard() {
   setupLawyerProfileForm();
   setupCasesManagement();
   loadLawyerChats();
+  loadLawyerStats();
+  loadNews();
+  loadQuickActions('lawyer');
+  updateProfilePreview();
 }
 
 /**
@@ -708,6 +720,230 @@ async function createChatItem(conversation, userRole) {
   `;
 
   return item;
+}
+
+/**
+ * Load client statistics for dashboard
+ */
+async function loadClientStats() {
+  const statsContainer = document.getElementById('statsCards');
+
+  try {
+    // Get conversation count
+    const { data: conversations } = await supabase
+      .from('conversations')
+      .select('id')
+      .eq('client_id', currentUser.id);
+
+    // Get total lawyers count
+    const { data: lawyers } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('role', 'lawyer');
+
+    statsContainer.innerHTML = `
+      <div class="stat-card">
+        <div class="stat-icon">💬</div>
+        <div class="stat-content">
+          <h3>${conversations?.length || 0}</h3>
+          <p>Active Conversations</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⚖️</div>
+        <div class="stat-content">
+          <h3>${lawyers?.length || 0}</h3>
+          <p>Registered Lawyers</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🏛️</div>
+        <div class="stat-content">
+          <h3>10+</h3>
+          <p>Practice Areas</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🌍</div>
+        <div class="stat-content">
+          <h3>12+</h3>
+          <p>Cities Covered</p>
+        </div>
+      </div>
+    `;
+  } catch (error) {
+    console.error('Error loading stats:', error);
+    statsContainer.innerHTML = '';
+  }
+}
+
+/**
+ * Load lawyer statistics for dashboard
+ */
+async function loadLawyerStats() {
+  const statsContainer = document.getElementById('statsCards');
+
+  try {
+    // Get cases count
+    const { data: cases } = await supabase
+      .from('cases')
+      .select('id, status')
+      .eq('lawyer_id', currentUser.id);
+
+    const ongoingCases = cases?.filter(c => c.status === 'ongoing').length || 0;
+    const totalCases = cases?.length || 0;
+
+    // Get conversations count
+    const { data: conversations } = await supabase
+      .from('conversations')
+      .select('id')
+      .eq('lawyer_id', currentUser.id);
+
+    const totalClients = conversations?.length || 0;
+
+    statsContainer.innerHTML = `
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div class="stat-content">
+          <h3>${totalCases}</h3>
+          <p>Total Cases</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-content">
+          <h3>${ongoingCases}</h3>
+          <p>Ongoing Cases</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-content">
+          <h3>${totalClients}</h3>
+          <p>Total Clients</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-content">
+          <h3>${lawyerDetails?.years_experience || 0}</h3>
+          <p>Years Experience</p>
+        </div>
+      </div>
+    `;
+  } catch (error) {
+    console.error('Error loading stats:', error);
+    statsContainer.innerHTML = '';
+  }
+}
+
+/**
+ * Load legal news
+ */
+function loadNews() {
+  const newsContainer = document.getElementById('newsContainer');
+
+  // Mock news data (in a real app, this would come from an API)
+  const newsItems = [
+    {
+      title: 'Supreme Court Introduces New Digital Filing System',
+      date: '2025-11-15',
+      summary: 'The Supreme Court of India has launched an enhanced e-filing portal to streamline case submissions and improve accessibility for lawyers nationwide.',
+      category: 'Technology'
+    },
+    {
+      title: 'Bar Council Updates Professional Conduct Guidelines',
+      date: '2025-11-10',
+      summary: 'New guidelines emphasize ethical standards in digital consultations and social media presence for legal professionals.',
+      category: 'Regulations'
+    },
+    {
+      title: 'Consumer Protection Act Amendments Proposed',
+      date: '2025-11-05',
+      summary: 'Ministry of Consumer Affairs proposes amendments to strengthen consumer rights in e-commerce and digital transactions.',
+      category: 'Legislation'
+    },
+    {
+      title: 'Delhi High Court Announces Fast-Track Courts for Property Disputes',
+      date: '2025-11-01',
+      summary: 'Special benches to be constituted to expedite resolution of property-related cases in the capital region.',
+      category: 'Courts'
+    }
+  ];
+
+  newsContainer.innerHTML = newsItems.map(news => `
+    <div class="news-item">
+      <div class="news-header">
+        <span class="news-category">${news.category}</span>
+        <span class="news-date">${formatSimpleDate(news.date)}</span>
+      </div>
+      <h4>${news.title}</h4>
+      <p>${news.summary}</p>
+    </div>
+  `).join('');
+}
+
+/**
+ * Load quick actions based on role
+ */
+function loadQuickActions(role) {
+  const actionsContainer = document.getElementById('quickActions');
+
+  if (role === 'client') {
+    actionsContainer.innerHTML = `
+      <button class="quick-action-btn" onclick="switchToSection('findLawyersSection')">
+        <div class="qa-icon">🔍</div>
+        <div class="qa-label">Find Lawyers</div>
+      </button>
+      <button class="quick-action-btn" onclick="switchToSection('myChatsSection')">
+        <div class="qa-icon">💬</div>
+        <div class="qa-label">My Chats</div>
+      </button>
+      <button class="quick-action-btn" onclick="switchToSection('profileSection')">
+        <div class="qa-icon">👤</div>
+        <div class="qa-label">Update Profile</div>
+      </button>
+      <button class="quick-action-btn" onclick="window.location.href='chat.html'">
+        <div class="qa-icon">📨</div>
+        <div class="qa-label">Messages</div>
+      </button>
+    `;
+  } else {
+    actionsContainer.innerHTML = `
+      <button class="quick-action-btn" onclick="switchToSection('myCasesSection')">
+        <div class="qa-icon">📋</div>
+        <div class="qa-label">Manage Cases</div>
+      </button>
+      <button class="quick-action-btn" onclick="switchToSection('clientChatsSection')">
+        <div class="qa-icon">💬</div>
+        <div class="qa-label">Client Chats</div>
+      </button>
+      <button class="quick-action-btn" onclick="switchToSection('lawyerProfileSection')">
+        <div class="qa-icon">⚖️</div>
+        <div class="qa-label">Update Profile</div>
+      </button>
+      <button class="quick-action-btn" onclick="window.location.href='chat.html'">
+        <div class="qa-icon">📨</div>
+        <div class="qa-label">Messages</div>
+      </button>
+    `;
+  }
+}
+
+/**
+ * Update profile preview
+ */
+function updateProfilePreview() {
+  // Get initials
+  const nameParts = currentProfile.full_name.split(' ');
+  const initials = nameParts.map(part => part[0]).join('').toUpperCase().substring(0, 2);
+
+  document.getElementById('profileInitials').textContent = initials;
+  document.getElementById('previewName').textContent = currentProfile.full_name;
+  document.getElementById('previewRole').textContent = currentProfile.role === 'client' ? 'Client' : 'Lawyer';
+  document.getElementById('previewRole').className = currentProfile.role === 'client' ? 'role-badge client' : 'role-badge lawyer';
+  document.getElementById('previewCity').textContent = currentProfile.city || 'Not set';
+  document.getElementById('previewState').textContent = currentProfile.state || 'Not set';
 }
 
 /**
