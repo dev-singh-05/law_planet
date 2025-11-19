@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - LawPlanet</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-brand">
+        <h1 class="logo">⚖️ LawPlanet</h1>
+      </div>
+      <div class="nav-actions">
+        <span id="welcomeUser" class="welcome-text"></span>
+        <button class="btn btn-secondary btn-sm" onclick="handleLogout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Container -->
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <!-- Dynamic sidebar items loaded by dashboard.js -->
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Profile Section -->
+      <section id="profileSection" class="content-section">
+        <h2>My Profile</h2>
+        <div class="card">
+          <form id="profileForm">
+            <div class="form-group">
+              <label for="profileName">Full Name</label>
+              <input type="text" id="profileName" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="profileCity">City</label>
+                <select id="profileCity">
+                  <option value="">Select City</option>
+                  <option value="Delhi">Delhi</option>
+                  <option value="Mumbai">Mumbai</option>
+                  <option value="Bengaluru">Bengaluru</option>
+                  <option value="Kolkata">Kolkata</option>
+                  <option value="Chennai">Chennai</option>
+                  <option value="Hyderabad">Hyderabad</option>
+                  <option value="Pune">Pune</option>
+                  <option value="Ahmedabad">Ahmedabad</option>
+                  <option value="Jaipur">Jaipur</option>
+                  <option value="Lucknow">Lucknow</option>
+                  <option value="Chandigarh">Chandigarh</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="profileState">State</label>
+                <input type="text" id="profileState" placeholder="e.g., Maharashtra">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="profilePhone">Phone</label>
+              <input type="tel" id="profilePhone" placeholder="+91 XXXXX XXXXX">
+            </div>
+            <div class="form-group">
+              <label for="profileLanguages">Languages (comma-separated)</label>
+              <input type="text" id="profileLanguages" placeholder="e.g., English, Hindi, Marathi">
+            </div>
+            <div class="form-group">
+              <label for="profileDescription">Description</label>
+              <textarea id="profileDescription" rows="3" placeholder="Tell us about yourself or what help you need"></textarea>
+            </div>
+            <div id="profileError" class="error-message"></div>
+            <div id="profileSuccess" class="success-message"></div>
+            <button type="submit" class="btn btn-primary">Update Profile</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Lawyer Profile Section (only for lawyers) -->
+      <section id="lawyerProfileSection" class="content-section" style="display: none;">
+        <h2>Lawyer Profile</h2>
+        <div class="card">
+          <form id="lawyerProfileForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="barCouncilId">Bar Council ID</label>
+                <input type="text" id="barCouncilId" required>
+              </div>
+              <div class="form-group">
+                <label for="yearsExperience">Years of Experience</label>
+                <input type="number" id="yearsExperience" min="0" max="50">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="practiceAreas">Practice Areas (comma-separated)</label>
+              <input type="text" id="practiceAreas" placeholder="e.g., Civil, Criminal, Family">
+            </div>
+            <div class="form-group">
+              <label for="courts">Courts (comma-separated)</label>
+              <input type="text" id="courts" placeholder="e.g., Delhi High Court, Supreme Court of India">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="consultationMode">Consultation Mode</label>
+                <select id="consultationMode">
+                  <option value="online">Online</option>
+                  <option value="in_person">In-Person</option>
+                  <option value="both">Both</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="consultationFee">Consultation Fee (₹ per session)</label>
+                <input type="number" id="consultationFee" min="0" placeholder="e.g., 1000">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="about">About / Bio</label>
+              <textarea id="about" rows="4" placeholder="Tell clients about your expertise and experience"></textarea>
+            </div>
+            <div id="lawyerProfileError" class="error-message"></div>
+            <div id="lawyerProfileSuccess" class="success-message"></div>
+            <button type="submit" class="btn btn-primary">Update Lawyer Profile</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Find Lawyers Section (only for clients) -->
+      <section id="findLawyersSection" class="content-section" style="display: none;">
+        <h2>Find Lawyers</h2>
+        <div class="card">
+          <div class="filters">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="filterCity">City</label>
+                <select id="filterCity">
+                  <option value="">All Cities</option>
+                  <option value="Delhi">Delhi</option>
+                  <option value="Mumbai">Mumbai</option>
+                  <option value="Bengaluru">Bengaluru</option>
+                  <option value="Kolkata">Kolkata</option>
+                  <option value="Chennai">Chennai</option>
+                  <option value="Hyderabad">Hyderabad</option>
+                  <option value="Pune">Pune</option>
+                  <option value="Ahmedabad">Ahmedabad</option>
+                  <option value="Jaipur">Jaipur</option>
+                  <option value="Lucknow">Lucknow</option>
+                  <option value="Chandigarh">Chandigarh</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="filterPracticeArea">Practice Area</label>
+                <select id="filterPracticeArea">
+                  <option value="">All Practice Areas</option>
+                  <option value="Civil">Civil Law</option>
+                  <option value="Criminal">Criminal Law</option>
+                  <option value="Family">Family Law</option>
+                  <option value="Property">Property Law</option>
+                  <option value="Corporate">Corporate Law</option>
+                  <option value="Tax">Tax Law</option>
+                  <option value="Labour">Labour Law</option>
+                  <option value="Constitutional">Constitutional Law</option>
+                  <option value="IPR">Intellectual Property</option>
+                  <option value="Consumer">Consumer Law</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="filterExperience">Experience</label>
+                <select id="filterExperience">
+                  <option value="">Any Experience</option>
+                  <option value="0-5">0-5 years</option>
+                  <option value="5-10">5-10 years</option>
+                  <option value="10+">10+ years</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="searchLawyers()">Search</button>
+          </div>
+        </div>
+
+        <div id="lawyersGrid" class="lawyers-grid">
+          <!-- Lawyer cards will be inserted here -->
+        </div>
+      </section>
+
+      <!-- My Cases Section (only for lawyers) -->
+      <section id="myCasesSection" class="content-section" style="display: none;">
+        <h2>My Cases</h2>
+
+        <!-- Add Case Form -->
+        <div class="card">
+          <h3>Add New Case</h3>
+          <form id="addCaseForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="caseTitle">Case Title</label>
+                <input type="text" id="caseTitle" required placeholder="e.g., Property dispute in Mumbai">
+              </div>
+              <div class="form-group">
+                <label for="caseType">Case Type</label>
+                <select id="caseType">
+                  <option value="Civil">Civil</option>
+                  <option value="Criminal">Criminal</option>
+                  <option value="Family">Family</option>
+                  <option value="Property">Property</option>
+                  <option value="Corporate">Corporate</option>
+                  <option value="Tax">Tax</option>
+                  <option value="Labour">Labour</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="caseCourt">Court</label>
+                <input type="text" id="caseCourt" placeholder="e.g., Delhi High Court">
+              </div>
+              <div class="form-group">
+                <label for="caseStartDate">Start Date</label>
+                <input type="date" id="caseStartDate">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="caseSummary">Summary</label>
+              <textarea id="caseSummary" rows="2" placeholder="Brief summary (no confidential details)"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Case</button>
+          </form>
+        </div>
+
+        <!-- Cases List -->
+        <div id="casesList" class="cases-list">
+          <!-- Cases will be inserted here -->
+        </div>
+      </section>
+
+      <!-- My Chats Section (for clients) -->
+      <section id="myChatsSection" class="content-section" style="display: none;">
+        <h2>My Conversations</h2>
+        <div id="clientChatsList" class="chats-list">
+          <!-- Conversations will be inserted here -->
+        </div>
+      </section>
+
+      <!-- Client Chats Section (for lawyers) -->
+      <section id="clientChatsSection" class="content-section" style="display: none;">
+        <h2>Client Conversations</h2>
+        <div id="lawyerChatsList" class="chats-list">
+          <!-- Conversations will be inserted here -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Lawyer Profile Modal -->
+  <div id="lawyerModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeLawyerModal()">&times;</span>
+      <div id="lawyerModalContent">
+        <!-- Lawyer details will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

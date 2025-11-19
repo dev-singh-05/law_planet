@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LawPlanet - Connect with Trusted Lawyers Across India</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-brand">
+        <h1 class="logo">⚖️ LawPlanet</h1>
+        <p class="tagline">Connect with trusted lawyers across India</p>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h2 class="hero-title">Find Legal Help or Grow Your Practice</h2>
+      <p class="hero-subtitle">India's trusted platform for connecting clients with qualified lawyers</p>
+    </div>
+  </section>
+
+  <!-- Role Selection & Auth -->
+  <section class="auth-section">
+    <div class="container">
+      <div class="role-cards">
+        <div class="role-card" id="clientCard">
+          <div class="role-icon">👤</div>
+          <h3>I am a Client</h3>
+          <p>Find qualified lawyers for your legal needs</p>
+          <button class="btn btn-primary" onclick="selectRole('client')">Get Legal Help</button>
+        </div>
+        <div class="role-card" id="lawyerCard">
+          <div class="role-icon">⚖️</div>
+          <h3>I am a Lawyer</h3>
+          <p>Connect with clients and grow your practice</p>
+          <button class="btn btn-primary" onclick="selectRole('lawyer')">Join as Lawyer</button>
+        </div>
+      </div>
+
+      <!-- Auth Forms Container -->
+      <div class="auth-forms" id="authForms" style="display: none;">
+        <div class="auth-container">
+          <div class="auth-header">
+            <h2 id="authRoleTitle">Client</h2>
+            <div class="auth-tabs">
+              <button class="auth-tab active" id="loginTab" onclick="switchAuthMode('login')">Login</button>
+              <button class="auth-tab" id="signupTab" onclick="switchAuthMode('signup')">Sign Up</button>
+            </div>
+          </div>
+
+          <!-- Login Form -->
+          <form id="loginForm" class="auth-form">
+            <div class="form-group">
+              <label for="loginEmail">Email</label>
+              <input type="email" id="loginEmail" required placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+              <label for="loginPassword">Password</label>
+              <input type="password" id="loginPassword" required placeholder="Enter password">
+            </div>
+            <div id="loginError" class="error-message"></div>
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+            <button type="button" class="btn btn-secondary btn-block" onclick="backToRoleSelection()">Back</button>
+          </form>
+
+          <!-- Signup Form -->
+          <form id="signupForm" class="auth-form" style="display: none;">
+            <div class="form-group">
+              <label for="signupName">Full Name</label>
+              <input type="text" id="signupName" required placeholder="Enter your full name">
+            </div>
+            <div class="form-group">
+              <label for="signupEmail">Email</label>
+              <input type="email" id="signupEmail" required placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+              <label for="signupPassword">Password</label>
+              <input type="password" id="signupPassword" required placeholder="Min 6 characters">
+            </div>
+            <div class="form-group">
+              <label for="signupCity">City</label>
+              <select id="signupCity" required>
+                <option value="">Select City</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bengaluru">Bengaluru</option>
+                <option value="Kolkata">Kolkata</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Pune">Pune</option>
+                <option value="Ahmedabad">Ahmedabad</option>
+                <option value="Jaipur">Jaipur</option>
+                <option value="Lucknow">Lucknow</option>
+                <option value="Chandigarh">Chandigarh</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="signupPhone">Phone (Optional)</label>
+              <input type="tel" id="signupPhone" placeholder="+91 XXXXX XXXXX">
+            </div>
+
+            <!-- Lawyer-specific fields -->
+            <div id="lawyerFields" style="display: none;">
+              <div class="form-group">
+                <label for="barCouncilId">Bar Council ID</label>
+                <input type="text" id="barCouncilId" placeholder="e.g., D/1234/2020">
+              </div>
+              <div class="form-group">
+                <label for="practiceArea">Primary Practice Area</label>
+                <select id="practiceArea">
+                  <option value="">Select Practice Area</option>
+                  <option value="Civil">Civil Law</option>
+                  <option value="Criminal">Criminal Law</option>
+                  <option value="Family">Family Law</option>
+                  <option value="Property">Property Law</option>
+                  <option value="Corporate">Corporate Law</option>
+                  <option value="Tax">Tax Law</option>
+                  <option value="Labour">Labour Law</option>
+                  <option value="Constitutional">Constitutional Law</option>
+                  <option value="IPR">Intellectual Property</option>
+                  <option value="Consumer">Consumer Law</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="yearsExperience">Years of Experience</label>
+                <input type="number" id="yearsExperience" min="0" max="50" placeholder="0">
+              </div>
+            </div>
+
+            <div id="signupError" class="error-message"></div>
+            <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+            <button type="button" class="btn btn-secondary btn-block" onclick="backToRoleSelection()">Back</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 LawPlanet. This is a demo platform - not real legal advice.</p>
+    </div>
+  </footer>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="js/auth.js"></script>
+
+  <script>
+    let selectedRole = null;
+
+    function selectRole(role) {
+      selectedRole = role;
+      document.getElementById('authForms').style.display = 'block';
+      document.getElementById('authRoleTitle').textContent = role === 'client' ? 'Client' : 'Lawyer';
+
+      // Show/hide lawyer fields
+      const lawyerFields = document.getElementById('lawyerFields');
+      if (role === 'lawyer') {
+        lawyerFields.style.display = 'block';
+        document.getElementById('barCouncilId').required = true;
+        document.getElementById('practiceArea').required = true;
+      } else {
+        lawyerFields.style.display = 'none';
+        document.getElementById('barCouncilId').required = false;
+        document.getElementById('practiceArea').required = false;
+      }
+
+      // Scroll to form
+      document.getElementById('authForms').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function switchAuthMode(mode) {
+      const loginForm = document.getElementById('loginForm');
+      const signupForm = document.getElementById('signupForm');
+      const loginTab = document.getElementById('loginTab');
+      const signupTab = document.getElementById('signupTab');
+
+      if (mode === 'login') {
+        loginForm.style.display = 'block';
+        signupForm.style.display = 'none';
+        loginTab.classList.add('active');
+        signupTab.classList.remove('active');
+      } else {
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'block';
+        loginTab.classList.remove('active');
+        signupTab.classList.add('active');
+      }
+    }
+
+    function backToRoleSelection() {
+      document.getElementById('authForms').style.display = 'none';
+      selectedRole = null;
+      document.getElementById('loginForm').reset();
+      document.getElementById('signupForm').reset();
+      document.getElementById('loginError').textContent = '';
+      document.getElementById('signupError').textContent = '';
+    }
+
+    // Export selectedRole for auth.js
+    window.getSelectedRole = () => selectedRole;
+  </script>
+</body>
+</html>
