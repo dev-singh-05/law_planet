@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LawPlanet - Your Gateway to Legal Help in India</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/public.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <span class="logo-icon">⚖️</span>
+        <span class="logo-text">LawPlanet</span>
+      </div>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="#home" class="nav-link active" data-section="home">Home</a></li>
+        <li><a href="#find-lawyer" class="nav-link" data-section="find-lawyer">Find a Lawyer</a></li>
+        <li><a href="#news" class="nav-link" data-section="news">Law News</a></li>
+        <li><a href="#indian-law" class="nav-link" data-section="indian-law">Indian Law</a></li>
+        <li><a href="#profile" class="nav-link" data-section="profile">My Profile</a></li>
+        <li><a href="#about" class="nav-link" data-section="about">About Us</a></li>
+        <li><a href="#contact" class="nav-link" data-section="contact">Contact</a></li>
+        <li><a href="index.html" class="nav-link nav-cta">Login / Sign Up</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main id="mainContent">
+
+    <!-- HOME SECTION -->
+    <section id="home" class="section active">
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-content">
+          <h1 class="hero-title">LawPlanet</h1>
+          <p class="hero-subtitle">Your gateway to legal help in India</p>
+          <p class="hero-description">
+            Understanding Indian law made simple. Find qualified lawyers, learn your rights,
+            and stay updated with the latest legal developments across India.
+          </p>
+          <div class="hero-buttons">
+            <button class="btn btn-primary" onclick="navigateTo('find-lawyer')">Find a Lawyer</button>
+            <button class="btn btn-secondary" onclick="navigateTo('indian-law')">Know Your Rights</button>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&h=400&fit=crop" alt="Justice scales illustration">
+        </div>
+      </div>
+
+      <!-- Dashboard Cards -->
+      <div class="container">
+        <h2 class="section-title">Explore LawPlanet</h2>
+        <div class="dashboard-grid">
+          <div class="dash-card" onclick="navigateTo('find-lawyer')">
+            <div class="dash-icon">🔍</div>
+            <h3>Find a Lawyer</h3>
+            <p>Search and connect with qualified lawyers across India by city and practice area</p>
+          </div>
+          <div class="dash-card" onclick="navigateTo('news')">
+            <div class="dash-icon">📰</div>
+            <h3>Law News</h3>
+            <p>Stay updated with the latest legal news, court judgments, and policy changes</p>
+          </div>
+          <div class="dash-card" onclick="navigateTo('indian-law')">
+            <div class="dash-icon">📚</div>
+            <h3>Indian Law Basics</h3>
+            <p>Learn about the Indian legal system, your rights, and important laws</p>
+          </div>
+          <div class="dash-card" onclick="navigateTo('profile')">
+            <div class="dash-icon">👤</div>
+            <h3>My Profile</h3>
+            <p>Manage your profile and save your preferences for quick access</p>
+          </div>
+          <div class="dash-card" onclick="navigateTo('contact')">
+            <div class="dash-icon">📞</div>
+            <h3>Helpline & Contact</h3>
+            <p>Get help, report issues, or contact our support team</p>
+          </div>
+          <div class="dash-card" onclick="navigateTo('about')">
+            <div class="dash-icon">ℹ️</div>
+            <h3>About LawPlanet</h3>
+            <p>Learn about our mission to make legal information accessible</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Latest News Preview -->
+      <div class="container">
+        <div class="news-preview-section">
+          <div class="section-header">
+            <h2 class="section-title">Latest Law News</h2>
+            <button class="btn btn-link" onclick="navigateTo('news')">View All →</button>
+          </div>
+          <div class="news-preview-grid" id="newsPreview">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Law Facts -->
+      <div class="container">
+        <h2 class="section-title">Quick Indian Law Facts</h2>
+        <div class="facts-grid">
+          <div class="fact-card">
+            <div class="fact-icon">🏛️</div>
+            <h4>Constitution of India</h4>
+            <p>The supreme law of India, adopted on 26th January 1950, with 395 articles and 12 schedules</p>
+          </div>
+          <div class="fact-card">
+            <div class="fact-icon">⚖️</div>
+            <h4>Court Hierarchy</h4>
+            <p>District Courts → High Courts (28 states) → Supreme Court of India (apex court)</p>
+          </div>
+          <div class="fact-card">
+            <div class="fact-icon">🛡️</div>
+            <h4>Fundamental Rights</h4>
+            <p>6 fundamental rights guaranteed to all citizens: Equality, Freedom, Exploitation, Religion, Culture, Constitutional Remedies</p>
+          </div>
+          <div class="fact-card">
+            <div class="fact-icon">📜</div>
+            <h4>Legal System</h4>
+            <p>India follows common law system based on recorded judicial precedents</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FIND A LAWYER SECTION -->
+    <section id="find-lawyer" class="section">
+      <div class="container">
+        <h1 class="page-title">Find a Lawyer</h1>
+        <p class="page-subtitle">Search for qualified lawyers across India by location and specialization</p>
+
+        <!-- Search/Filter Bar -->
+        <div class="filter-card">
+          <div class="filter-grid">
+            <div class="filter-group">
+              <label for="cityFilter">City</label>
+              <select id="cityFilter" class="filter-select">
+                <option value="">All Cities</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bengaluru">Bengaluru</option>
+                <option value="Kolkata">Kolkata</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Pune">Pune</option>
+                <option value="Ahmedabad">Ahmedabad</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="practiceFilter">Practice Area</label>
+              <select id="practiceFilter" class="filter-select">
+                <option value="">All Practice Areas</option>
+                <option value="Civil">Civil Law</option>
+                <option value="Criminal">Criminal Law</option>
+                <option value="Family">Family Law</option>
+                <option value="Property">Property Law</option>
+                <option value="Corporate">Corporate Law</option>
+                <option value="Tax">Tax Law</option>
+                <option value="Labour">Labour Law</option>
+                <option value="Constitutional">Constitutional Law</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="nameFilter">Lawyer Name</label>
+              <input type="text" id="nameFilter" class="filter-input" placeholder="Search by name...">
+            </div>
+            <div class="filter-group">
+              <label>&nbsp;</label>
+              <button class="btn btn-primary" onclick="filterLawyers()">Search</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lawyers Grid -->
+        <div class="lawyers-grid" id="lawyersGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- LAW NEWS SECTION -->
+    <section id="news" class="section">
+      <div class="container">
+        <h1 class="page-title">Law News & Updates</h1>
+        <p class="page-subtitle">Stay informed about the latest legal developments in India</p>
+
+        <!-- News Categories -->
+        <div class="news-categories">
+          <button class="category-tag active" data-category="all" onclick="filterNews('all')">All News</button>
+          <button class="category-tag" data-category="Supreme Court" onclick="filterNews('Supreme Court')">Supreme Court</button>
+          <button class="category-tag" data-category="High Court" onclick="filterNews('High Court')">High Court</button>
+          <button class="category-tag" data-category="Parliament" onclick="filterNews('Parliament')">Parliament</button>
+          <button class="category-tag" data-category="Policy" onclick="filterNews('Policy')">Policy</button>
+        </div>
+
+        <!-- News Grid -->
+        <div class="news-grid" id="newsGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- INDIAN LAW SECTION -->
+    <section id="indian-law" class="section">
+      <div class="container">
+        <h1 class="page-title">Indian Law Basics</h1>
+        <p class="page-subtitle">Understanding the Indian legal system made simple</p>
+
+        <!-- Court Structure -->
+        <div class="law-section-card">
+          <h2 class="law-section-title">📊 Structure of Courts in India</h2>
+          <div class="court-hierarchy">
+            <div class="court-level court-supreme">
+              <h3>Supreme Court of India</h3>
+              <p>Highest judicial authority. Located in New Delhi. Hears appeals and constitutional matters.</p>
+            </div>
+            <div class="court-arrow">↓</div>
+            <div class="court-level court-high">
+              <h3>High Courts</h3>
+              <p>28 High Courts across states and union territories. Appellate jurisdiction over district courts.</p>
+            </div>
+            <div class="court-arrow">↓</div>
+            <div class="court-level court-district">
+              <h3>District Courts</h3>
+              <p>Trial courts at district level. Handle civil and criminal cases at the first instance.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Branches of Law -->
+        <div class="law-section-card">
+          <h2 class="law-section-title">⚖️ Key Branches of Law</h2>
+          <div class="law-branches-grid">
+            <div class="law-branch">
+              <h4>Civil Law</h4>
+              <p>Deals with disputes between individuals and organizations (property, contracts, torts)</p>
+            </div>
+            <div class="law-branch">
+              <h4>Criminal Law</h4>
+              <p>Relates to crimes and punishment as per Indian Penal Code (IPC)</p>
+            </div>
+            <div class="law-branch">
+              <h4>Constitutional Law</h4>
+              <p>Interpretation and implementation of the Constitution of India</p>
+            </div>
+            <div class="law-branch">
+              <h4>Family Law</h4>
+              <p>Marriage, divorce, child custody, adoption, and inheritance</p>
+            </div>
+            <div class="law-branch">
+              <h4>Property Law</h4>
+              <p>Ownership, transfer, and disputes related to real estate</p>
+            </div>
+            <div class="law-branch">
+              <h4>Corporate Law</h4>
+              <p>Business regulations, company formations, mergers, and compliance</p>
+            </div>
+            <div class="law-branch">
+              <h4>Tax Law</h4>
+              <p>Income tax, GST, and other taxation matters</p>
+            </div>
+            <div class="law-branch">
+              <h4>Labour Law</h4>
+              <p>Employment rights, industrial disputes, and workplace regulations</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fundamental Rights -->
+        <div class="law-section-card">
+          <h2 class="law-section-title">🛡️ Fundamental Rights & Duties</h2>
+          <div class="rights-grid">
+            <div class="right-card">
+              <h4>Right to Equality (Articles 14-18)</h4>
+              <p>Equality before law, prohibition of discrimination, abolition of untouchability</p>
+            </div>
+            <div class="right-card">
+              <h4>Right to Freedom (Articles 19-22)</h4>
+              <p>Freedom of speech, assembly, movement, residence, and profession</p>
+            </div>
+            <div class="right-card">
+              <h4>Right against Exploitation (Articles 23-24)</h4>
+              <p>Prohibition of trafficking, forced labour, and child labour</p>
+            </div>
+            <div class="right-card">
+              <h4>Right to Freedom of Religion (Articles 25-28)</h4>
+              <p>Freedom to practice, profess, and propagate religion</p>
+            </div>
+            <div class="right-card">
+              <h4>Cultural and Educational Rights (Articles 29-30)</h4>
+              <p>Protection of language, script, and culture of minorities</p>
+            </div>
+            <div class="right-card">
+              <h4>Right to Constitutional Remedies (Article 32)</h4>
+              <p>Right to move Supreme Court for enforcement of fundamental rights</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Important Acts -->
+        <div class="law-section-card">
+          <h2 class="law-section-title">📜 Important Acts</h2>
+          <div class="acts-list">
+            <div class="act-item">
+              <h4>Indian Penal Code (IPC), 1860</h4>
+              <p>Main criminal code defining crimes and punishments in India</p>
+            </div>
+            <div class="act-item">
+              <h4>Code of Criminal Procedure (CrPC), 1973</h4>
+              <p>Procedural law for administration of criminal law in India</p>
+            </div>
+            <div class="act-item">
+              <h4>Indian Evidence Act, 1872</h4>
+              <p>Rules regarding admissibility of evidence in court proceedings</p>
+            </div>
+            <div class="act-item">
+              <h4>Information Technology Act, 2000</h4>
+              <p>Law dealing with cybercrime and electronic commerce</p>
+            </div>
+            <div class="act-item">
+              <h4>Consumer Protection Act, 2019</h4>
+              <p>Protection of consumer rights and interests</p>
+            </div>
+            <div class="act-item">
+              <h4>Right to Information Act, 2005</h4>
+              <p>Citizens' right to access information from public authorities</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT US SECTION -->
+    <section id="about" class="section">
+      <div class="container">
+        <h1 class="page-title">About LawPlanet</h1>
+        <p class="page-subtitle">Making legal information accessible to everyone</p>
+
+        <!-- Mission -->
+        <div class="about-card featured">
+          <h2>What is LawPlanet?</h2>
+          <p>
+            LawPlanet is an informational portal designed to bridge the gap between legal professionals
+            and citizens seeking legal guidance. We are NOT a law firm and do not provide legal
+            representation or advice.
+          </p>
+          <p>
+            Our mission is to make legal information more approachable and help people understand
+            their rights under Indian law. We connect users with qualified lawyers and provide
+            educational content about the Indian legal system.
+          </p>
+        </div>
+
+        <!-- How it Works -->
+        <div class="how-it-works">
+          <h2 class="section-title">How LawPlanet Works</h2>
+          <div class="steps-grid">
+            <div class="step-card">
+              <div class="step-number">1</div>
+              <h3>Explore Legal Information</h3>
+              <p>Browse our comprehensive guides on Indian law, rights, and legal procedures</p>
+            </div>
+            <div class="step-card">
+              <div class="step-number">2</div>
+              <h3>Find Qualified Lawyers</h3>
+              <p>Search our directory of verified lawyers by location and specialization</p>
+            </div>
+            <div class="step-card">
+              <div class="step-number">3</div>
+              <h3>Stay Informed</h3>
+              <p>Get the latest updates on legal news, court judgments, and policy changes</p>
+            </div>
+            <div class="step-card">
+              <div class="step-number">4</div>
+              <h3>Get Help</h3>
+              <p>Contact lawyers directly or reach out to our support for guidance</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team -->
+        <div class="team-section">
+          <h2 class="section-title">Our Team</h2>
+          <div class="team-grid">
+            <div class="team-card">
+              <div class="team-avatar">RS</div>
+              <h3>Rajesh Sharma</h3>
+              <p class="team-role">Founder & Legal Advisor</p>
+              <p class="team-bio">10+ years in legal tech, passionate about democratizing legal information</p>
+            </div>
+            <div class="team-card">
+              <div class="team-avatar">PK</div>
+              <h3>Priya Kumar</h3>
+              <p class="team-role">Head of Content</p>
+              <p class="team-bio">Legal researcher with expertise in Indian constitutional and civil law</p>
+            </div>
+            <div class="team-card">
+              <div class="team-avatar">AV</div>
+              <h3>Amit Verma</h3>
+              <p class="team-role">Technology Lead</p>
+              <p class="team-bio">Building accessible legal tech solutions for modern India</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MY PROFILE SECTION -->
+    <section id="profile" class="section">
+      <div class="container profile-container">
+        <h1 class="page-title">My Profile</h1>
+        <p class="page-subtitle">Manage your information and preferences</p>
+
+        <div class="profile-grid">
+          <!-- Profile Display -->
+          <div class="profile-card">
+            <h2>Your Profile</h2>
+            <div id="profileDisplay" class="profile-display">
+              <div class="profile-avatar-large" id="profileAvatarLarge">U</div>
+              <h3 id="displayName">Guest User</h3>
+              <p class="profile-type" id="displayType">Client</p>
+              <p class="profile-detail"><strong>Email:</strong> <span id="displayEmail">Not set</span></p>
+              <p class="profile-detail"><strong>City:</strong> <span id="displayCity">Not set</span></p>
+              <p class="profile-detail"><strong>Bio:</strong> <span id="displayBio">Not set</span></p>
+              <p class="profile-detail"><strong>Interests:</strong> <span id="displayInterests">Not set</span></p>
+            </div>
+          </div>
+
+          <!-- Profile Form -->
+          <div class="profile-card">
+            <h2>Edit Profile</h2>
+            <form id="profileForm" class="profile-form">
+              <div class="form-group">
+                <label for="profileName">Full Name</label>
+                <input type="text" id="profileName" placeholder="Enter your name">
+              </div>
+              <div class="form-group">
+                <label for="profileEmail">Email</label>
+                <input type="email" id="profileEmail" placeholder="your@email.com">
+              </div>
+              <div class="form-group">
+                <label for="profileCity">City</label>
+                <select id="profileCity">
+                  <option value="">Select City</option>
+                  <option value="Delhi">Delhi</option>
+                  <option value="Mumbai">Mumbai</option>
+                  <option value="Bengaluru">Bengaluru</option>
+                  <option value="Kolkata">Kolkata</option>
+                  <option value="Chennai">Chennai</option>
+                  <option value="Hyderabad">Hyderabad</option>
+                  <option value="Pune">Pune</option>
+                  <option value="Ahmedabad">Ahmedabad</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="profileType">I am a</label>
+                <select id="profileType">
+                  <option value="Client">Client</option>
+                  <option value="Lawyer">Lawyer</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="profileBio">Short Bio</label>
+                <textarea id="profileBio" rows="3" placeholder="Tell us about yourself..."></textarea>
+              </div>
+              <div class="form-group">
+                <label for="profileInterests">Areas of Interest / Practice Areas</label>
+                <input type="text" id="profileInterests" placeholder="e.g., Civil, Criminal, Family">
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">Save Profile</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="section">
+      <div class="container">
+        <h1 class="page-title">Contact & Helpline</h1>
+        <p class="page-subtitle">Get in touch with us or find important helpline numbers</p>
+
+        <div class="contact-disclaimer">
+          <p><strong>Important:</strong> LawPlanet is an informational platform and does NOT provide legal representation or advice.
+          We are not a law firm. For legal assistance, please contact a qualified lawyer.</p>
+        </div>
+
+        <div class="contact-grid">
+          <!-- Contact Form -->
+          <div class="contact-card">
+            <h2>Send us a Message</h2>
+            <form id="contactForm" class="contact-form">
+              <div class="form-group">
+                <label for="contactName">Name</label>
+                <input type="text" id="contactName" required placeholder="Your name">
+              </div>
+              <div class="form-group">
+                <label for="contactEmail">Email</label>
+                <input type="email" id="contactEmail" required placeholder="your@email.com">
+              </div>
+              <div class="form-group">
+                <label for="contactSubject">Subject</label>
+                <input type="text" id="contactSubject" required placeholder="How can we help?">
+              </div>
+              <div class="form-group">
+                <label for="contactMessage">Message</label>
+                <textarea id="contactMessage" rows="5" required placeholder="Your message..."></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+            </form>
+            <div id="contactSuccess" class="success-toast" style="display: none;">
+              Message sent successfully! We'll get back to you soon.
+            </div>
+          </div>
+
+          <!-- Helpline Info -->
+          <div class="contact-card helpline-card">
+            <h2>Helpline Numbers</h2>
+            <p class="helpline-note">
+              <strong>Note:</strong> These are example helpline numbers. Please verify official
+              numbers from government sources.
+            </p>
+            <div class="helpline-list">
+              <div class="helpline-item">
+                <h4>📧 General Queries</h4>
+                <p>Email: info@lawplanet.example.in</p>
+                <p>Phone: 1800-XXX-XXXX (Demo)</p>
+              </div>
+              <div class="helpline-item">
+                <h4>🔧 Technical Support</h4>
+                <p>Email: support@lawplanet.example.in</p>
+                <p>Phone: 1800-XXX-YYYY (Demo)</p>
+              </div>
+              <div class="helpline-item">
+                <h4>👮 Cybercrime Helpline</h4>
+                <p>National: 1930</p>
+                <p>Website: <a href="https://cybercrime.gov.in" target="_blank">cybercrime.gov.in</a></p>
+              </div>
+              <div class="helpline-item">
+                <h4>👩 Women's Helpline</h4>
+                <p>National: 181</p>
+                <p>24x7 Support for women in distress</p>
+              </div>
+              <div class="helpline-item">
+                <h4>⚖️ Legal Aid</h4>
+                <p>NALSA: <a href="https://nalsa.gov.in" target="_blank">nalsa.gov.in</a></p>
+                <p>Free legal aid for eligible citizens</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h3>LawPlanet</h3>
+          <p>Making legal information accessible to everyone in India.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#home" onclick="navigateTo('home')">Home</a></li>
+            <li><a href="#find-lawyer" onclick="navigateTo('find-lawyer')">Find a Lawyer</a></li>
+            <li><a href="#news" onclick="navigateTo('news')">Law News</a></li>
+            <li><a href="#indian-law" onclick="navigateTo('indian-law')">Indian Law</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#" onclick="alert('Terms & Conditions page')">Terms & Conditions</a></li>
+            <li><a href="#" onclick="alert('Privacy Policy page')">Privacy Policy</a></li>
+            <li><a href="#about" onclick="navigateTo('about')">About Us</a></li>
+            <li><a href="#contact" onclick="navigateTo('contact')">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Disclaimer</h4>
+          <p class="footer-disclaimer">
+            LawPlanet is NOT a law firm and does not provide legal advice.
+            The information provided is for general informational purposes only.
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; <span id="currentYear"></span> LawPlanet. All rights reserved. For informational purposes only. Not a substitute for legal advice.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lawyer Profile Modal -->
+  <div id="lawyerModal" class="modal">
+    <div class="modal-overlay" onclick="closeLawyerModal()"></div>
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeLawyerModal()">&times;</button>
+      <div id="lawyerModalContent">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- News Detail Modal -->
+  <div id="newsModal" class="modal">
+    <div class="modal-overlay" onclick="closeNewsModal()"></div>
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeNewsModal()">&times;</button>
+      <div id="newsModalContent">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <script src="js/public.js"></script>
+</body>
+</html>
