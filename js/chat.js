@@ -54,7 +54,7 @@ async function initializeChat() {
   } catch (error) {
     console.error('Chat initialization error:', error);
     alert('Failed to load chat. Please try again.');
-    window.location.href = 'dashboard.html';
+    window.location.href = 'home.html';
   }
 }
 
@@ -186,7 +186,7 @@ async function loadConversation(convId) {
   } catch (error) {
     console.error('Error loading conversation:', error);
     alert('Failed to load conversation.');
-    window.location.href = 'dashboard.html';
+    window.location.href = 'home.html';
   }
 }
 

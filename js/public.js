@@ -1,97 +1,24 @@
 /**
- * LawPlanet Public Site JavaScript
- * Handles navigation, filtering, profile management, and interactivity
+ * LawPlanet Integrated Site JavaScript
+ * Handles navigation, authentication, real Supabase data, and interactivity
  */
+
+import { supabase } from './supabaseClient.js';
+import { formatDate as utilFormatDate, formatSimpleDate, joinWithCommas } from './utils.js';
+
+// ============================================
+// GLOBAL STATE
+// ============================================
+
+let currentUser = null;
+let currentProfile = null;
+let isAuthenticated = false;
 
 // ============================================
 // DATA
 // ============================================
 
-// Dummy lawyers data
-const lawyersData = [
-  {
-    id: 1,
-    name: "Adv. Priya Sharma",
-    city: "Delhi",
-    practiceAreas: ["Family", "Divorce"],
-    experience: 7,
-    description: "Specializes in family law and divorce matters with a compassionate approach",
-    phone: "+91 98XXX XXXXX",
-    email: "priya.sharma@example.com"
-  },
-  {
-    id: 2,
-    name: "Adv. Rajesh Kumar",
-    city: "Mumbai",
-    practiceAreas: ["Corporate", "Tax"],
-    experience: 12,
-    description: "Expert in corporate law and tax compliance for businesses",
-    phone: "+91 97XXX XXXXX",
-    email: "rajesh.kumar@example.com"
-  },
-  {
-    id: 3,
-    name: "Adv. Anita Desai",
-    city: "Bengaluru",
-    practiceAreas: ["Property", "Civil"],
-    experience: 5,
-    description: "Handles property disputes and civil litigation with expertise",
-    phone: "+91 96XXX XXXXX",
-    email: "anita.desai@example.com"
-  },
-  {
-    id: 4,
-    name: "Adv. Vikram Singh",
-    city: "Delhi",
-    practiceAreas: ["Criminal", "Constitutional"],
-    experience: 15,
-    description: "Senior advocate specializing in criminal and constitutional law",
-    phone: "+91 95XXX XXXXX",
-    email: "vikram.singh@example.com"
-  },
-  {
-    id: 5,
-    name: "Adv. Meera Patel",
-    city: "Ahmedabad",
-    practiceAreas: ["Family", "Property"],
-    experience: 8,
-    description: "Experienced in family law and property transactions",
-    phone: "+91 94XXX XXXXX",
-    email: "meera.patel@example.com"
-  },
-  {
-    id: 6,
-    name: "Adv. Arjun Reddy",
-    city: "Hyderabad",
-    practiceAreas: ["Civil", "Labour"],
-    experience: 10,
-    description: "Expertise in civil litigation and labour law disputes",
-    phone: "+91 93XXX XXXXX",
-    email: "arjun.reddy@example.com"
-  },
-  {
-    id: 7,
-    name: "Adv. Sneha Iyer",
-    city: "Chennai",
-    practiceAreas: ["Corporate", "IPR"],
-    experience: 6,
-    description: "Specializes in corporate law and intellectual property rights",
-    phone: "+91 92XXX XXXXX",
-    email: "sneha.iyer@example.com"
-  },
-  {
-    id: 8,
-    name: "Adv. Amit Ghosh",
-    city: "Kolkata",
-    practiceAreas: ["Criminal", "Civil"],
-    experience: 20,
-    description: "Veteran criminal lawyer with extensive trial experience",
-    phone: "+91 91XXX XXXXX",
-    email: "amit.ghosh@example.com"
-  }
-];
-
-// Dummy news data
+// News data (static - in real app would come from API/DB)
 const newsData = [
   {
     id: 1,
@@ -142,6 +69,85 @@ const newsData = [
     content: "The Ministry of Law and Justice has released updated guidelines for arbitration proceedings, aiming to make the process more efficient and time-bound. The new guidelines emphasize digital hearings, strict timelines, and reduced costs, making arbitration a more attractive alternative to traditional litigation."
   }
 ];
+
+// ============================================
+// AUTHENTICATION
+// ============================================
+
+async function checkAuthentication() {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      currentUser = user;
+      isAuthenticated = true;
+
+      // Load user profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      currentProfile = profile;
+
+      updateNavForAuthenticatedUser();
+    } else {
+      isAuthenticated = false;
+      updateNavForGuestUser();
+    }
+  } catch (error) {
+    console.error('Auth check error:', error);
+    isAuthenticated = false;
+    updateNavForGuestUser();
+  }
+}
+
+function updateNavForAuthenticatedUser() {
+  const authLink = document.getElementById('authLink');
+  const authButton = document.getElementById('navAuthButton');
+
+  if (authLink && authButton) {
+    authLink.textContent = 'Logout';
+    authLink.className = 'nav-link nav-cta';
+    authLink.href = '#';
+    authLink.onclick = handleLogout;
+  }
+
+  // Show user name in nav if possible
+  if (currentProfile && currentProfile.full_name) {
+    const welcomeSpan = document.createElement('span');
+    welcomeSpan.className = 'nav-link';
+    welcomeSpan.style.cursor = 'default';
+    welcomeSpan.textContent = `Hi, ${currentProfile.full_name.split(' ')[0]}`;
+    authButton.parentNode.insertBefore(welcomeSpan, authButton);
+  }
+}
+
+function updateNavForGuestUser() {
+  const authLink = document.getElementById('authLink');
+
+  if (authLink) {
+    authLink.textContent = 'Login / Sign Up';
+    authLink.className = 'nav-link nav-cta';
+    authLink.href = 'index.html';
+    authLink.onclick = null;
+  }
+}
+
+async function handleLogout(e) {
+  if (e) e.preventDefault();
+
+  try {
+    await supabase.auth.signOut();
+    window.location.href = 'index.html';
+  } catch (error) {
+    console.error('Logout error:', error);
+    alert('Failed to logout');
+  }
+}
+
+window.handleLogout = handleLogout;
 
 // ============================================
 // NAVIGATION
@@ -217,10 +223,35 @@ function loadNewsPreview() {
 }
 
 // ============================================
-// FIND A LAWYER SECTION
+// FIND A LAWYER SECTION - REAL DATA FROM SUPABASE
 // ============================================
 
-let filteredLawyers = [...lawyersData];
+let filteredLawyers = [];
+let allLawyers = [];
+
+async function loadLawyers() {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select(`
+        *,
+        lawyer_details (*)
+      `)
+      .eq('role', 'lawyer');
+
+    if (error) throw error;
+
+    allLawyers = data || [];
+    filteredLawyers = [...allLawyers];
+    renderLawyers();
+  } catch (error) {
+    console.error('Error loading lawyers:', error);
+    const grid = document.getElementById('lawyersGrid');
+    if (grid) {
+      grid.innerHTML = '<p class="empty-message">Unable to load lawyers. Please try again later.</p>';
+    }
+  }
+}
 
 function renderLawyers() {
   const grid = document.getElementById('lawyersGrid');
@@ -231,34 +262,42 @@ function renderLawyers() {
     return;
   }
 
-  grid.innerHTML = filteredLawyers.map(lawyer => `
-    <div class="lawyer-card">
-      <div class="lawyer-header">
-        <h3>${lawyer.name}</h3>
-        <p class="lawyer-location">📍 ${lawyer.city}</p>
+  grid.innerHTML = filteredLawyers.map(lawyer => {
+    const details = lawyer.lawyer_details || {};
+    const practiceAreas = details.practice_areas || [];
+    const experience = details.years_experience || 0;
+
+    return `
+      <div class="lawyer-card">
+        <div class="lawyer-header">
+          <h3>${lawyer.full_name || 'Lawyer'}</h3>
+          <p class="lawyer-location">📍 ${lawyer.city || 'India'}</p>
+        </div>
+        <div class="lawyer-info">
+          <p><strong>Practice Areas:</strong> ${practiceAreas.length > 0 ? practiceAreas.join(', ') : 'Not specified'}</p>
+          <p><strong>Experience:</strong> ${experience}+ years</p>
+          ${details.consultation_fee_inr ? `<p><strong>Fee:</strong> ₹${details.consultation_fee_inr}</p>` : ''}
+        </div>
+        ${details.about ? `<p class="lawyer-description">"${details.about.substring(0, 100)}${details.about.length > 100 ? '...' : ''}"</p>` : ''}
+        <div class="lawyer-actions">
+          <button class="btn btn-secondary" onclick="viewLawyerProfile('${lawyer.id}')">View Profile</button>
+          <button class="btn btn-primary" onclick="contactLawyer('${lawyer.id}')">Contact</button>
+        </div>
       </div>
-      <div class="lawyer-info">
-        <p><strong>Practice Areas:</strong> ${lawyer.practiceAreas.join(', ')}</p>
-        <p><strong>Experience:</strong> ${lawyer.experience}+ years</p>
-      </div>
-      <p class="lawyer-description">"${lawyer.description}"</p>
-      <div class="lawyer-actions">
-        <button class="btn btn-secondary" onclick="viewLawyerProfile(${lawyer.id})">View Profile</button>
-        <button class="btn btn-primary" onclick="contactLawyer(${lawyer.id})">Contact</button>
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 function filterLawyers() {
-  const city = document.getElementById('cityFilter').value;
-  const practice = document.getElementById('practiceFilter').value;
+  const city = document.getElementById('filterCity').value;
+  const practice = document.getElementById('filterPracticeArea').value;
   const name = document.getElementById('nameFilter').value.toLowerCase();
 
-  filteredLawyers = lawyersData.filter(lawyer => {
+  filteredLawyers = allLawyers.filter(lawyer => {
+    const details = lawyer.lawyer_details || {};
     const cityMatch = !city || lawyer.city === city;
-    const practiceMatch = !practice || lawyer.practiceAreas.includes(practice);
-    const nameMatch = !name || lawyer.name.toLowerCase().includes(name);
+    const practiceMatch = !practice || (details.practice_areas && details.practice_areas.includes(practice));
+    const nameMatch = !name || (lawyer.full_name && lawyer.full_name.toLowerCase().includes(name));
     return cityMatch && practiceMatch && nameMatch;
   });
 
@@ -266,39 +305,66 @@ function filterLawyers() {
 }
 
 function viewLawyerProfile(lawyerId) {
-  const lawyer = lawyersData.find(l => l.id === lawyerId);
+  const lawyer = allLawyers.find(l => l.id === lawyerId);
   if (!lawyer) return;
 
+  const details = lawyer.lawyer_details || {};
   const modal = document.getElementById('lawyerModal');
   const content = document.getElementById('lawyerModalContent');
 
   content.innerHTML = `
     <div class="lawyer-profile-modal">
-      <h2>${lawyer.name}</h2>
-      <p class="lawyer-location" style="font-size: 1.1rem; margin-bottom: 1.5rem;">📍 ${lawyer.city}</p>
+      <h2>${lawyer.full_name || 'Lawyer'}</h2>
+      <p class="lawyer-location" style="font-size: 1.1rem; margin-bottom: 1.5rem;">📍 ${lawyer.city || 'India'}</p>
 
-      <div class="modal-section">
-        <h3 style="color: var(--primary-color); margin-bottom: 0.75rem;">Practice Areas</h3>
-        <p>${lawyer.practiceAreas.join(', ')}</p>
-      </div>
+      ${details.bar_council_id ? `
+        <div class="modal-section">
+          <h3 style="color: var(--primary-color); margin-bottom: 0.75rem;">Bar Council ID</h3>
+          <p>${details.bar_council_id}</p>
+        </div>
+      ` : ''}
+
+      ${details.practice_areas && details.practice_areas.length > 0 ? `
+        <div class="modal-section">
+          <h3 style="color: var(--primary-color); margin-bottom: 0.75rem;">Practice Areas</h3>
+          <p>${details.practice_areas.join(', ')}</p>
+        </div>
+      ` : ''}
 
       <div class="modal-section">
         <h3 style="color: var(--primary-color); margin-bottom: 0.75rem;">Experience</h3>
-        <p>${lawyer.experience}+ years of legal practice</p>
+        <p>${details.years_experience || 0}+ years of legal practice</p>
       </div>
 
-      <div class="modal-section">
-        <h3 style="color: var(--primary-color); margin-bottom: 0.75rem;">About</h3>
-        <p>${lawyer.description}</p>
-      </div>
+      ${details.courts && details.courts.length > 0 ? `
+        <div class="modal-section">
+          <h3 style="color: var(--primary-color); margin-bottom: 0.75rem;">Courts</h3>
+          <p>${details.courts.join(', ')}</p>
+        </div>
+      ` : ''}
 
-      <div class="modal-section">
-        <h3 style="color: var(--primary-color); margin-bottom: 0.75rem;">Contact Information</h3>
-        <p><strong>Email:</strong> ${lawyer.email}</p>
-        <p><strong>Phone:</strong> ${lawyer.phone}</p>
-      </div>
+      ${details.about ? `
+        <div class="modal-section">
+          <h3 style="color: var(--primary-color); margin-bottom: 0.75rem;">About</h3>
+          <p>${details.about}</p>
+        </div>
+      ` : ''}
 
-      <button class="btn btn-primary btn-block" onclick="contactLawyer(${lawyer.id}); closeLawyerModal();">Contact Now</button>
+      ${details.consultation_fee_inr ? `
+        <div class="modal-section">
+          <h3 style="color: var(--primary-color); margin-bottom: 0.75rem;">Consultation Fee</h3>
+          <p>₹${details.consultation_fee_inr} per session (${details.consultation_mode || 'online'})</p>
+        </div>
+      ` : ''}
+
+      ${lawyer.phone ? `
+        <div class="modal-section">
+          <h3 style="color: var(--primary-color); margin-bottom: 0.75rem;">Contact</h3>
+          <p><strong>Phone:</strong> ${lawyer.phone}</p>
+        </div>
+      ` : ''}
+
+      <button class="btn btn-primary btn-block" onclick="contactLawyer('${lawyer.id}'); closeLawyerModal();">Contact Now</button>
     </div>
   `;
 
@@ -310,10 +376,18 @@ function closeLawyerModal() {
 }
 
 function contactLawyer(lawyerId) {
-  const lawyer = lawyersData.find(l => l.id === lawyerId);
+  if (!isAuthenticated) {
+    alert('Please login to contact lawyers');
+    window.location.href = 'index.html';
+    return;
+  }
+
+  const lawyer = allLawyers.find(l => l.id === lawyerId);
   if (lawyer) {
-    alert(`Contacting ${lawyer.name}\\n\\nIn a real application, this would open a contact form or messaging interface.\\n\\nEmail: ${lawyer.email}\\nPhone: ${lawyer.phone}`);
-    navigateTo('contact');
+    // In a real app, this would create a conversation or open chat
+    alert(`Contact ${lawyer.full_name}\\n\\nYou can now start a conversation with this lawyer.\\n\\nThis would redirect to the chat interface.`);
+    // Optionally redirect to chat or create conversation
+    // window.location.href = 'chat.html';
   }
 }
 
@@ -382,60 +456,119 @@ function closeNewsModal() {
 }
 
 // ============================================
-// PROFILE SECTION
+// PROFILE SECTION - REAL DATA FROM SUPABASE
 // ============================================
 
-function loadProfile() {
-  const savedProfile = localStorage.getItem('lawplanetProfile');
+async function loadProfile() {
+  if (!isAuthenticated || !currentProfile) {
+    // Show guest message
+    document.getElementById('profileDisplay').innerHTML = `
+      <div class="profile-avatar-large">G</div>
+      <h3>Guest User</h3>
+      <p class="profile-type">Not Logged In</p>
+      <p style="text-align: center; color: var(--text-light); margin-top: 1rem;">
+        Please <a href="index.html" style="color: var(--primary-color);">login</a> to view and edit your profile.
+      </p>
+    `;
 
-  if (savedProfile) {
-    const profile = JSON.parse(savedProfile);
-
-    // Populate form
-    document.getElementById('profileName').value = profile.name || '';
-    document.getElementById('profileEmail').value = profile.email || '';
-    document.getElementById('profileCity').value = profile.city || '';
-    document.getElementById('profileType').value = profile.type || 'Client';
-    document.getElementById('profileBio').value = profile.bio || '';
-    document.getElementById('profileInterests').value = profile.interests || '';
-
-    // Update display
-    updateProfileDisplay(profile);
+    // Disable form
+    const form = document.getElementById('profileForm');
+    if (form) {
+      Array.from(form.elements).forEach(el => {
+        if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') {
+          el.disabled = true;
+        }
+      });
+    }
+    return;
   }
+
+  // Enable form
+  const form = document.getElementById('profileForm');
+  if (form) {
+    Array.from(form.elements).forEach(el => {
+      if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') {
+        el.disabled = false;
+      }
+    });
+  }
+
+  // Populate form with current profile data
+  document.getElementById('profileName').value = currentProfile.full_name || '';
+  document.getElementById('profileEmail').value = currentUser.email || '';
+  document.getElementById('profileCity').value = currentProfile.city || '';
+  document.getElementById('profileType').value = currentProfile.role || 'Client';
+  document.getElementById('profileBio').value = currentProfile.description || '';
+
+  const languages = currentProfile.languages || [];
+  document.getElementById('profileInterests').value = languages.join(', ');
+
+  // Update display
+  updateProfileDisplay();
 }
 
-function updateProfileDisplay(profile) {
-  const name = profile.name || 'Guest User';
+function updateProfileDisplay() {
+  if (!currentProfile) return;
+
+  const name = currentProfile.full_name || 'User';
   const initials = name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2) || 'U';
 
   document.getElementById('profileAvatarLarge').textContent = initials;
   document.getElementById('displayName').textContent = name;
-  document.getElementById('displayType').textContent = profile.type || 'Client';
-  document.getElementById('displayEmail').textContent = profile.email || 'Not set';
-  document.getElementById('displayCity').textContent = profile.city || 'Not set';
-  document.getElementById('displayBio').textContent = profile.bio || 'Not set';
-  document.getElementById('displayInterests').textContent = profile.interests || 'Not set';
+  document.getElementById('displayType').textContent = currentProfile.role === 'client' ? 'Client' : 'Lawyer';
+  document.getElementById('displayEmail').textContent = currentUser?.email || 'Not set';
+  document.getElementById('displayCity').textContent = currentProfile.city || 'Not set';
+  document.getElementById('displayBio').textContent = currentProfile.description || 'Not set';
+
+  const languages = currentProfile.languages || [];
+  document.getElementById('displayInterests').textContent = languages.length > 0 ? languages.join(', ') : 'Not set';
 }
 
 // Profile form submission
 const profileForm = document.getElementById('profileForm');
 if (profileForm) {
-  profileForm.addEventListener('submit', (e) => {
+  profileForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const profile = {
-      name: document.getElementById('profileName').value,
-      email: document.getElementById('profileEmail').value,
-      city: document.getElementById('profileCity').value,
-      type: document.getElementById('profileType').value,
-      bio: document.getElementById('profileBio').value,
-      interests: document.getElementById('profileInterests').value
-    };
+    if (!isAuthenticated) {
+      alert('Please login to update your profile');
+      window.location.href = 'index.html';
+      return;
+    }
 
-    localStorage.setItem('lawplanetProfile', JSON.stringify(profile));
-    updateProfileDisplay(profile);
+    try {
+      const languages = document.getElementById('profileInterests').value
+        .split(',')
+        .map(l => l.trim())
+        .filter(l => l);
 
-    alert('Profile saved successfully!');
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          full_name: document.getElementById('profileName').value,
+          city: document.getElementById('profileCity').value,
+          description: document.getElementById('profileBio').value,
+          languages: languages
+        })
+        .eq('id', currentUser.id);
+
+      if (error) throw error;
+
+      // Reload profile
+      const { data: updatedProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', currentUser.id)
+        .single();
+
+      currentProfile = updatedProfile;
+      updateProfileDisplay();
+
+      alert('Profile updated successfully!');
+    } catch (error) {
+      console.error('Profile update error:', error);
+      alert('Failed to update profile: ' + error.message);
+    }
   });
 }
 
@@ -453,7 +586,7 @@ if (contactForm) {
     const subject = document.getElementById('contactSubject').value;
     const message = document.getElementById('contactMessage').value;
 
-    // In a real app, this would send to a server
+    // In a real app, this would send to a server or Supabase
     console.log('Contact form submitted:', { name, email, subject, message });
 
     // Show success message
@@ -484,18 +617,21 @@ function formatDate(dateString) {
 // INITIALIZATION
 // ============================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // Set current year in footer
   const yearSpan = document.getElementById('currentYear');
   if (yearSpan) {
     yearSpan.textContent = new Date().getFullYear();
   }
 
+  // Check authentication first
+  await checkAuthentication();
+
   // Load initial content
   loadNewsPreview();
-  renderLawyers();
+  await loadLawyers();
   renderNews();
-  loadProfile();
+  await loadProfile();
 
   // Check URL hash for direct navigation
   const hash = window.location.hash.substring(1);

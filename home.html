@@ -29,10 +29,12 @@
         <li><a href="#find-lawyer" class="nav-link" data-section="find-lawyer">Find a Lawyer</a></li>
         <li><a href="#news" class="nav-link" data-section="news">Law News</a></li>
         <li><a href="#indian-law" class="nav-link" data-section="indian-law">Indian Law</a></li>
-        <li><a href="#profile" class="nav-link" data-section="profile">My Profile</a></li>
+        <li><a href="#profile" class="nav-link" data-section="profile" id="navProfile">My Profile</a></li>
         <li><a href="#about" class="nav-link" data-section="about">About Us</a></li>
         <li><a href="#contact" class="nav-link" data-section="contact">Contact</a></li>
-        <li><a href="index.html" class="nav-link nav-cta">Login / Sign Up</a></li>
+        <li id="navAuthButton">
+          <a href="index.html" class="nav-link nav-cta" id="authLink">Login / Sign Up</a>
+        </li>
       </ul>
     </div>
   </nav>
@@ -632,6 +634,8 @@
     </div>
   </div>
 
-  <script src="js/public.js"></script>
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="js/public.js"></script>
 </body>
 </html>
